@@ -17,8 +17,8 @@ ni gestionnaire de dépendances. Elle se compose de deux éléments :
 
 | Composant | Rôle | Version cible |
 |---|---|---|
-| Serveur web + PHP | Sert les 7 pages et exécute la logique applicative | PHP 8.1 ou supérieur |
-| Base MySQL | Stocke les comptes et les commentaires | MySQL 8.0 / MariaDB 10.5+ |
+| Serveur web + PHP | Sert les 7 pages et exécute la logique applicative | PHP 8.0 ou supérieur |
+| Base de données | Stocke les comptes et les messages | MariaDB 5.5+ ou MySQL 5.5+ |
 
 Il n'y a ni `composer.json`, ni `package.json` : le déploiement se réduit donc à
 copier les fichiers et à configurer l'accès à la base. C'est un choix assumé pour
@@ -30,7 +30,7 @@ ce projet, dont le périmètre ne justifie aucune dépendance externe.
 
 Sur l'hébergement :
 
-- PHP **8.1 minimum**, avec l'extension **`pdo_mysql`** activée
+- PHP **8.0 minimum**, avec l'extension **`pdo_mysql`** activée
 - Une base de données MySQL et un **utilisateur dédié** à cette base
 - Un accès FTP/SFTP ou Git depuis le panneau Plesk
 - Un nom de domaine ou sous-domaine pointant vers l'hébergement
@@ -113,11 +113,9 @@ En ligne de commande, si l'hébergement fournit un accès SSH :
 mysql -u <livreor_user> -p <livreor> < livreor.sql
 ```
 
-> Le script commence par `DROP DATABASE IF EXISTS`. Sur un hébergement
-> mutualisé, l'utilisateur n'a généralement pas le droit de créer ou de
-> supprimer une base : supprimer alors les trois premières instructions
-> (`DROP DATABASE`, `CREATE DATABASE`, `USE`) et importer le reste dans la base
-> déjà créée à l'étape 4.1.
+> Le script ne crée pas la base : il ne contient que les tables et le jeu de
+> démonstration, et s'importe tel quel dans la base créée à l'étape 4.1. Aucune
+> adaptation n'est nécessaire entre le développement et la production.
 
 > **Supprimer le compte de démonstration après l'import.** Le script insère un
 > utilisateur `admin` dont le mot de passe en clair est lisible dans le fichier :

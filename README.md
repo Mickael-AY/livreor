@@ -17,7 +17,7 @@ Développeur Web et Web Mobile à La Plateforme_ de Toulon.
 | Élément | Choix |
 |---|---|
 | Langage serveur | PHP 8.1, sans framework |
-| Base de données | MySQL 8, moteur InnoDB, `utf8mb4_unicode_ci` |
+| Base de données | MySQL 8 en local, MariaDB 5.5 en production, InnoDB, `utf8mb4_unicode_ci` |
 | Accès aux données | PDO, requêtes préparées, émulation désactivée |
 | Interface | HTML5 sémantique, feuille CSS3 unique, adaptation aux petits écrans |
 | Environnement local | Laragon (Apache, PHP, MySQL) |
@@ -52,8 +52,13 @@ livreor/
 ```bash
 git clone https://github.com/Mickael-AY/livreor.git
 cd livreor
-mysql -u root < livreor.sql
+mysql -u root -e "CREATE DATABASE IF NOT EXISTS livreor CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+mysql -u root livreor < livreor.sql
 ```
+
+`livreor.sql` ne crée pas la base : sur un hébergement mutualisé, l'utilisateur
+applicatif n'a pas le droit d'exécuter `CREATE DATABASE`. Le même fichier sert
+donc en local et en production.
 
 Placer le dossier dans la racine web de Laragon (`C:\laragon\www\`) puis ouvrir
 `http://livreor.test/`.
@@ -70,6 +75,11 @@ Deux tables :
 
 - **`utilisateurs`** — `id`, `login` (unique), `password` (haché), `created_at`, `updated_at`
 - **`commentaires`** — `id`, `commentaire`, `id_utilisateur`, `date`
+
+Seule `created_at` est remplie par le serveur : MariaDB 5.5, utilisée en
+production, n'accepte qu'une colonne auto-remplie par table. `updated_at` et
+`date` sont renseignées par l'application. Le schéma reste ainsi importable
+sur MariaDB 5.5 comme sur MySQL 8.
 
 La clé étrangère `commentaires.id_utilisateur` référence `utilisateurs.id` en
 `ON DELETE CASCADE` : supprimer un compte supprime ses commentaires, qui n'ont

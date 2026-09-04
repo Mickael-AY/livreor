@@ -67,13 +67,16 @@ if ($_POST) {
         // Si pas d'erreur, effectuer les modifications
         if (empty($error)) {
             if (!empty($new_password)) {
-                // Modifier login et mot de passe
+                // Modifier login et mot de passe.
+                // updated_at est renseignée ici, et non par le serveur :
+                // MariaDB 5.5, utilisée en production, n'accepte qu'une seule
+                // colonne auto-remplie par table, réservée à created_at.
                 $password_hash = password_hash($new_password, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("UPDATE utilisateurs SET login = ?, password = ? WHERE id = ?");
+                $stmt = $pdo->prepare("UPDATE utilisateurs SET login = ?, password = ?, updated_at = NOW() WHERE id = ?");
                 $result = $stmt->execute([$new_login, $password_hash, $_SESSION['user_id']]);
             } else {
                 // Modifier seulement le login
-                $stmt = $pdo->prepare("UPDATE utilisateurs SET login = ? WHERE id = ?");
+                $stmt = $pdo->prepare("UPDATE utilisateurs SET login = ?, updated_at = NOW() WHERE id = ?");
                 $result = $stmt->execute([$new_login, $_SESSION['user_id']]);
             }
 
