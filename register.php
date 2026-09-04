@@ -51,7 +51,7 @@ if ($_POST) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription - Livre d'Or</title>
+    <title>Inscription - Livre d'or</title>
     <link rel="stylesheet" href="assets/styles.css">
 </head>
 
