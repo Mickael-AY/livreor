@@ -19,7 +19,7 @@ Développeur Web et Web Mobile à La Plateforme_ de Toulon.
 | Langage serveur | PHP 8.1, sans framework |
 | Base de données | MySQL 8, moteur InnoDB, `utf8mb4_unicode_ci` |
 | Accès aux données | PDO, requêtes préparées, émulation désactivée |
-| Interface | HTML5 sémantique et CSS3, responsive mobile-first |
+| Interface | HTML5 sémantique, feuille CSS3 unique, adaptation aux petits écrans |
 | Environnement local | Laragon (Apache, PHP, MySQL) |
 
 Aucune dépendance externe : ni Composer, ni npm. Le périmètre du projet ne le
@@ -36,6 +36,8 @@ livreor/
 ├── register.php                 Inscription
 ├── logout.php                   Déconnexion
 ├── profil.php                   Espace profil (connecté)
+├── assets/
+│   └── styles.css               Feuille de style unique, partagée par les 7 pages
 ├── config.php                   Configuration et connexion PDO
 ├── config.example.php           Modèle de configuration locale
 ├── livreor.sql                  Schéma de la base et jeu de démonstration
