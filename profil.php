@@ -95,7 +95,7 @@ if ($_POST) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Profil - Livre d'Or</title>
+    <title>Mon profil - Livre d'or</title>
     <link rel="stylesheet" href="assets/styles.css">
 </head>
 
@@ -103,12 +103,12 @@ if ($_POST) {
     <div class="container">
         <header>
             <nav>
-                <a href="index.php" class="logo">Livre d'Or</a>
+                <a href="index.php" class="logo">Livre d'or</a>
                 <ul class="nav-links">
                     <li><a href="index.php">Accueil</a></li>
-                    <li><a href="livre-or.php">Livre d'Or</a></li>
-                    <li><a href="profil.php">Mon Profil</a></li>
-                    <li><a href="commentaire.php">Ajouter Commentaire</a></li>
+                    <li><a href="livre-or.php">Livre d'or</a></li>
+                    <li><a href="profil.php">Mon profil</a></li>
+                    <li><a href="commentaire.php">Écrire un message</a></li>
                     <li><a href="logout.php">Déconnexion</a></li>
                 </ul>
                 <div class="user-status">

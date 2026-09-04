@@ -19,7 +19,7 @@ $commentaires = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Livre d'Or - Commentaires</title>
+    <title>Livre d'or - Messages</title>
     <link rel="stylesheet" href="assets/styles.css">
 </head>
 
@@ -27,13 +27,13 @@ $commentaires = $stmt->fetchAll();
     <div class="container">
         <header>
             <nav>
-                <a href="index.php" class="logo">Livre d'Or</a>
+                <a href="index.php" class="logo">Livre d'or</a>
                 <ul class="nav-links">
                     <li><a href="index.php">Accueil</a></li>
-                    <li><a href="livre-or.php">Livre d'Or</a></li>
+                    <li><a href="livre-or.php">Livre d'or</a></li>
                     <?php if (isset($_SESSION['user_id'])): ?>
-                        <li><a href="profil.php">Mon Profil</a></li>
-                        <li><a href="commentaire.php">Ajouter Commentaire</a></li>
+                        <li><a href="profil.php">Mon profil</a></li>
+                        <li><a href="commentaire.php">Écrire un message</a></li>
                         <li><a href="logout.php">Déconnexion</a></li>
                     <?php else: ?>
                         <li><a href="login.php">Connexion</a></li>
@@ -53,7 +53,7 @@ $commentaires = $stmt->fetchAll();
         <main>
             <section class="page-header">
                 <h1>Livre d'or</h1>
-                <p>Découvrez les avis et commentaires de notre communauté</p>
+                <p>Les messages laissés par les visiteurs, du plus récent au plus ancien.</p>
             </section>
 
             <?php if (isset($_SESSION['user_id'])): ?>
