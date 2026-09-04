@@ -29,6 +29,7 @@ justifie pas, et cela rend le déploiement immédiat.
 
 ```
 livreor/
+├── .htaccess                    Règles Apache : ferme l'accès aux fichiers non publics
 ├── index.php                    Page d'accueil
 ├── livre-or.php                 Liste publique des commentaires
 ├── commentaire.php              Dépôt d'un commentaire (connecté)
@@ -96,6 +97,7 @@ couvre l'affichage du livre d'or et le décompte par utilisateur.
 | Fixation de session | `session_regenerate_id(true)` après authentification |
 | Fuite d'informations serveur | `display_errors` désactivé en production, erreurs journalisées |
 | Secrets dans le dépôt | Identifiants hors des fichiers versionnés, `config.local.php` ignoré par Git |
+| Fichiers exposés par le déploiement | `.htaccess` : schéma SQL, documentation, scripts et fichiers cachés inaccessibles depuis le web |
 
 ## Déploiement
 
