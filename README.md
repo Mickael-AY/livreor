@@ -1,8 +1,10 @@
 # Livre d'Or
 
 Application web permettant à des visiteurs inscrits de déposer et de consulter
-des commentaires. Réalisée en PHP et MySQL dans le cadre de la formation
+des messages. Réalisée en PHP et MySQL dans le cadre de la formation
 Développeur Web et Web Mobile à La Plateforme_ de Toulon.
+
+**En ligne : https://mickael-ayilan.students-laplateforme.io/livreor/**
 
 ## Fonctionnalités
 
@@ -20,7 +22,8 @@ Développeur Web et Web Mobile à La Plateforme_ de Toulon.
 | Base de données | MySQL 8 en local, MariaDB 5.5 en production, InnoDB, `utf8mb4_unicode_ci` |
 | Accès aux données | PDO, requêtes préparées, émulation désactivée |
 | Interface | HTML5 sémantique, feuille CSS3 unique, adaptation aux petits écrans |
-| Environnement local | Laragon (Apache, PHP, MySQL) |
+| Environnement local | Laragon (Apache, PHP 8.1, MySQL 8) |
+| Production | Plesk : nginx devant Apache, PHP 8.0, MariaDB 5.5 |
 
 Aucune dépendance externe : ni Composer, ni npm. Le périmètre du projet ne le
 justifie pas, et cela rend le déploiement immédiat.
