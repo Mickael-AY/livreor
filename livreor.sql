@@ -34,5 +34,5 @@ CREATE TABLE `commentaires` (
 
 -- (Optionnel) utilisateur de démonstration
 INSERT INTO `utilisateurs` (`login`, `password`)
-VALUES ('admin', '$2y$10$YkF3HV1uYDj6PfYZ7RUTzuQ0c.gqvGjYevTLJsA5kZD4mkxgn5vqK');
+VALUES ('admin', '$2y$10$v1TA/k2dEvipIQVuf1rww.lM6LcST5mP.9yXMvgC30MIUGS1oYszW');
 -- Mot de passe en clair : admin123
