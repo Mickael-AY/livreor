@@ -64,11 +64,11 @@ if ($_POST) {
             <div class="form-container">
                 <div class="form-header">
                     <h1>Ajouter un message</h1>
-                    <p>Partagez votre expérience avec notre communauté</p>
+                    <p>Votre message apparaîtra en tête du livre d'or.</p>
                 </div>
 
                 <div class="user-info">
-                    <strong>👤 <?= htmlspecialchars($_SESSION['user_login']) ?></strong>, votre commentaire sera publié immédiatement et visible par tous les visiteurs.
+                    Connecté en tant que <strong><?= htmlspecialchars($_SESSION['user_login']) ?></strong>. Votre message sera visible par tous les visiteurs, y compris ceux qui ne sont pas inscrits.
                 </div>
 
                 <?php if ($error): ?>
@@ -85,14 +85,16 @@ if ($_POST) {
                         <textarea
                             name="commentaire"
                             id="commentaire"
-                            placeholder="Écrivez ici votre commentaire, avis, suggestion... (minimum 10 caractères)"
+                            placeholder="Votre message, 10 caractères minimum."
                             required
                             maxlength="1000"><?= isset($_POST['commentaire']) ? htmlspecialchars($_POST['commentaire']) : '' ?></textarea>
                         <div class="character-count">Maximum 1000 caractères</div>
                     </div>
 
-                    <button type="submit" class="btn">📝 Publier mon commentaire</button>
-                    <a href="livre-or.php" class="btn btn-secondary" style="text-decoration: none; text-align: center; display: block;">📖 Retour au livre d'or</a>
+                    <div class="form-actions">
+                        <button type="submit" class="btn">Publier mon message</button>
+                        <a href="livre-or.php" class="btn btn-secondary">Retour au livre d'or</a>
+                    </div>
                 </form>
             </div>
         </main>

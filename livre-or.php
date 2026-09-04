@@ -59,14 +59,14 @@ $commentaires = $stmt->fetchAll();
             <?php if (isset($_SESSION['user_id'])): ?>
                 <section class="add-comment-section">
                     <h2>Laisser un message</h2>
-                    <p>Votre opinion compte pour nous ! Laissez un commentaire dans notre livre d'or.</p>
-                    <a href="commentaire.php" class="btn">Ajouter un commentaire</a>
+                    <p>Vous êtes connecté : vous pouvez déposer un message.</p>
+                    <a href="commentaire.php" class="btn">Écrire un message</a>
                 </section>
             <?php else: ?>
                 <div class="login-prompt">
-                    <p>🔒 <strong>Connectez-vous</strong> pour laisser votre commentaire et participer à la discussion !
-                        <a href="login.php">Se connecter</a> ou <a href="register.php">créer un compte</a>
-                    </p>
+                    <p>La lecture est libre. Pour écrire un message,
+                        <a href="login.php">connectez-vous</a> ou
+                        <a href="register.php">créez un compte</a>.</p>
                 </div>
             <?php endif; ?>
 
@@ -75,7 +75,7 @@ $commentaires = $stmt->fetchAll();
 
                 <?php if (empty($commentaires)): ?>
                     <div class="no-comments">
-                        <p>🌟 Aucun commentaire pour le moment. Soyez le premier à laisser votre avis !</p>
+                        <p>Aucun message pour le moment.</p>
                     </div>
                 <?php else: ?>
                     <?php foreach ($commentaires as $commentaire): ?>

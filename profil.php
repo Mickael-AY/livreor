@@ -183,8 +183,8 @@ if ($_POST) {
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" class="btn">💾 Enregistrer les modifications</button>
-                            <a href="livre-or.php" class="btn btn-secondary">📖 Retour au livre d'or</a>
+                            <button type="submit" class="btn">Enregistrer les modifications</button>
+                            <a href="livre-or.php" class="btn btn-secondary">Retour au livre d'or</a>
                         </div>
                     </form>
                 </div>
