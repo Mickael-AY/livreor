@@ -23,9 +23,17 @@ $racine = dirname(__DIR__);
 // journalise la cause et sort en code d'erreur : rien à traiter ici.
 require $racine . '/config.php';
 
+// config.php expose deux variables : les paramètres effectifs et la connexion.
+// Les reprendre explicitement rend la dépendance visible et analysable.
+/** @var array $config */
+$parametres = $config;
+
+/** @var PDO $pdo */
+$connexion = $pdo;
+
 // L'environnement se déduit du mode debug : activé en développement,
 // obligatoirement désactivé en production.
-$production = !$config['debug'];
+$production = !$parametres['debug'];
 
 $controles = [];
 $echecs    = 0;
@@ -106,7 +114,7 @@ controler(
 
 // --- Schéma de la base -------------------------------------------------------
 
-$tablesPresentes = $pdo->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN);
+$tablesPresentes = $connexion->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN);
 
 foreach (['utilisateurs', 'commentaires'] as $table) {
     controler(
@@ -115,7 +123,7 @@ foreach (['utilisateurs', 'commentaires'] as $table) {
     );
 }
 
-$moteur = $pdo->query("
+$moteur = $connexion->query("
     SELECT ENGINE
     FROM information_schema.TABLES
     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'commentaires'
@@ -126,7 +134,7 @@ controler(
     $moteur === 'InnoDB'
 );
 
-$contraintes = $pdo->query("
+$contraintes = $connexion->query("
     SELECT COUNT(*)
     FROM information_schema.TABLE_CONSTRAINTS
     WHERE TABLE_SCHEMA = DATABASE() AND CONSTRAINT_TYPE = 'FOREIGN KEY'
@@ -139,7 +147,7 @@ controler(
 
 // Le script SQL livre un compte de démonstration dont le mot de passe est
 // public. Le laisser en production ouvrirait un accès à n'importe qui.
-$demonstration = $pdo->query("
+$demonstration = $connexion->query("
     SELECT COUNT(*) FROM utilisateurs WHERE login = 'admin'
 ")->fetchColumn();
 
