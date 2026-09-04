@@ -47,4 +47,6 @@ Options -Indexes
 
 # Scripts d'exploitation : verifier-deploiement.php refuse déjà de
 # s'exécuter via HTTP, mais autant ne pas exposer le dossier.
-RedirectMatch 404 ^/bin/
+# Le motif accepte la racine comme un sous-dossier : l'application peut
+# etre installee dans httpdocs ou dans httpdocs/livreor.
+RedirectMatch 404 (^|/)bin/
