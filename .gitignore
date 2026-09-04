@@ -1,0 +1,23 @@
+# Configuration locale : contient les identifiants de la base de données
+config.local.php
+
+# Journaux
+*.log
+error_log
+
+# Sauvegardes de base de données
+dump*.sql
+*.sql.gz
+
+# Dépendances
+/vendor/
+/node_modules/
+
+# Fichiers d'éditeurs et de système
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Sauvegardes produites par deploy.sh
+/sauvegardes/

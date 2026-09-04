@@ -27,6 +27,11 @@ if ($_POST) {
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user["password"])) {
+            // Nouvel identifiant de session après authentification : un jeton
+            // imposé au visiteur avant sa connexion devient inutilisable.
+            // C'est la parade contre la fixation de session.
+            session_regenerate_id(true);
+
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_login'] = $user['login'];
 
