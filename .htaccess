@@ -1,0 +1,50 @@
+# =====================================================================
+# Livre d'Or — règles Apache
+# =====================================================================
+# Le dépôt est déployé tel quel dans la racine web : tous les fichiers
+# versionnés y sont donc exposés. Ce fichier referme ce qui n'a pas à
+# être servi à un visiteur.
+# =====================================================================
+
+# Pas de listage des répertoires : sans page d'index, Apache afficherait
+# sinon le contenu du dossier.
+Options -Indexes
+
+# Schéma SQL, documentation, scripts shell et modèle de configuration :
+# utiles au développeur, sans intérêt pour un visiteur, et révélateurs
+# de la structure de l'application pour un attaquant.
+<FilesMatch "\.(sql|md|sh|yml|lock)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Fichiers de configuration : le modèle comme la version locale.
+<FilesMatch "^config\.(local|example)\.php$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Fichiers commençant par un point : .gitignore, .env, .htaccess lui-même.
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Scripts d'exploitation : verifier-deploiement.php refuse déjà de
+# s'exécuter via HTTP, mais autant ne pas exposer le dossier.
+RedirectMatch 404 ^/bin/
