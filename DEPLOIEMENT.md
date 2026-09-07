@@ -202,9 +202,18 @@ php bin/verifier-deploiement.php
 ```
 
 Il contrôle la version de PHP, l'extension PDO, la configuration, la connexion,
-les deux tables, le moteur InnoDB, la clé étrangère et l'absence du compte de
-démonstration. Sortie en code `0` si tout est conforme, `1` sinon. Il refuse de
-s'exécuter depuis un navigateur.
+les deux tables, le moteur InnoDB, la clé étrangère, l'absence du compte de
+démonstration, et enfin **le stockage des sessions**. Sortie en code `0` si tout
+est conforme, `1` sinon. Il refuse de s'exécuter depuis un navigateur.
+
+Le contrôle des sessions écrit réellement un fichier dans le dossier désigné par
+`session.save_path`, puis le supprime. Vérifier la seule présence du dossier ne
+suffirait pas : celui de l'incident du 7 septembre existait, mais était plein.
+
+> **Limite à connaître :** en ligne de commande, PHP peut lire un
+> `session.save_path` différent de celui du serveur web, les deux
+> configurations étant distinctes. Un `[OK]` en console ne remplace donc pas un
+> essai de connexion réel sur le site.
 
 ### 5.2 Contrôles effectués le 4 septembre 2026
 
@@ -245,11 +254,14 @@ code. Pour déclencher une mise à jour :
 Depuis un accès SSH, le script `deploy.sh` enchaîne sauvegarde, récupération et
 vérification, et s'interrompt à la première erreur.
 
-> **Point non encore vérifié :** on ignore si un redéploiement Plesk supprime
-> les fichiers absents du dépôt. Si `config.local.php` venait à disparaître
-> après un `Deploy now`, il faudrait basculer la configuration sur les variables
-> d'environnement (**PHP Settings**), qui ne sont pas affectées par les
-> déploiements. À tester lors de la prochaine mise à jour.
+> **Vérifié le 7 septembre 2026 :** un redéploiement Plesk **ne supprime pas**
+> les fichiers absents du dépôt. Après un `Pull now` suivi d'une publication,
+> `config.local.php` était toujours en place et l'application lisait la base
+> normalement. La configuration peut donc rester dans ce fichier ; le recours
+> aux variables d'environnement (**PHP Settings**) n'est pas nécessaire.
+
+> Les réglages PHP du panneau, dont `session.save_path`, ne sont pas davantage
+> touchés par un déploiement : ils vivent hors du dépôt.
 
 ---
 
