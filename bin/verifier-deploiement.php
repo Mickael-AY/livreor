@@ -158,6 +158,55 @@ controler(
     true
 );
 
+// --- Stockage des sessions ---------------------------------------------------
+
+// Une session que le serveur ne parvient pas à écrire ne provoque aucune erreur
+// visible : l'authentification réussit, puis l'utilisateur se retrouve
+// déconnecté à la page suivante. Le seul contrôle fiable est d'écrire
+// réellement un fichier, car un dossier peut exister et rester inutilisable
+// s'il est saturé.
+
+$cheminSessions = (string) ini_get('session.save_path');
+
+// session.save_path accepte aussi les formes « N;/chemin » et « N;mode;/chemin »
+// où N est une profondeur de sous-dossiers : seul le chemin nous intéresse.
+if (str_contains($cheminSessions, ';')) {
+    $cheminSessions = substr($cheminSessions, strrpos($cheminSessions, ';') + 1);
+}
+
+if ($cheminSessions === '') {
+    $cheminSessions = sys_get_temp_dir();
+}
+
+controler(
+    "Dossier des sessions présent : $cheminSessions",
+    is_dir($cheminSessions),
+    'créer ce dossier, ou corriger session.save_path'
+);
+
+$sessionEcrite = false;
+$causeSession  = 'dossier absent';
+
+if (is_dir($cheminSessions)) {
+    $fichierTemoin = $cheminSessions . '/sess_verification_' . bin2hex(random_bytes(6));
+
+    if (@file_put_contents($fichierTemoin, 'verification') !== false) {
+        $sessionEcrite = true;
+        @unlink($fichierTemoin);
+    } else {
+        $derniere    = error_get_last();
+        $causeSession = $derniere === null
+            ? 'écriture refusée'
+            : preg_replace('/^.*failed: /', '', $derniere['message']);
+    }
+}
+
+controler(
+    "Écriture effective d'une session",
+    $sessionEcrite,
+    $causeSession
+);
+
 // --- Restitution -------------------------------------------------------------
 
 echo "\nVérification du déploiement — Livre d'Or\n";
