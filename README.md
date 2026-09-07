@@ -48,7 +48,8 @@ livreor/
 ├── deploy.sh                    Script de déploiement
 ├── DEPLOIEMENT.md               Procédure de déploiement
 └── bin/
-    └── verifier-deploiement.php Contrôles post-déploiement
+    ├── verifier-deploiement.php Contrôles sur la machine (ligne de commande)
+    └── verifier-en-ligne.php    Contrôles du site déployé, depuis l'extérieur
 ```
 
 ## Installation en local
@@ -109,8 +110,13 @@ décrite dans [DEPLOIEMENT.md](DEPLOIEMENT.md).
 
 ```bash
 ./deploy.sh                      # met à jour et vérifie
-php bin/verifier-deploiement.php # vérifie seulement
+php bin/verifier-deploiement.php # contrôle la machine    (local ou SSH)
+php bin/verifier-en-ligne.php    # contrôle le site publié (depuis partout)
 ```
+
+L'hébergement utilisé n'accorde pas d'accès SSH : le premier script tourne donc
+en local avant chaque mise en ligne, et le second vérifie la production depuis
+l'extérieur, en n'interrogeant que des URL publiques.
 
 ## Organisation Git
 
