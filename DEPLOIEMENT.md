@@ -245,11 +245,14 @@ code. Pour déclencher une mise à jour :
 Depuis un accès SSH, le script `deploy.sh` enchaîne sauvegarde, récupération et
 vérification, et s'interrompt à la première erreur.
 
-> **Point non encore vérifié :** on ignore si un redéploiement Plesk supprime
-> les fichiers absents du dépôt. Si `config.local.php` venait à disparaître
-> après un `Deploy now`, il faudrait basculer la configuration sur les variables
-> d'environnement (**PHP Settings**), qui ne sont pas affectées par les
-> déploiements. À tester lors de la prochaine mise à jour.
+> **Vérifié le 7 septembre 2026 :** un redéploiement Plesk **ne supprime pas**
+> les fichiers absents du dépôt. Après un `Pull now` suivi d'une publication,
+> `config.local.php` était toujours en place et l'application lisait la base
+> normalement. La configuration peut donc rester dans ce fichier ; le recours
+> aux variables d'environnement (**PHP Settings**) n'est pas nécessaire.
+
+> Les réglages PHP du panneau, dont `session.save_path`, ne sont pas davantage
+> touchés par un déploiement : ils vivent hors du dépôt.
 
 ---
 
