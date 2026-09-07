@@ -202,9 +202,18 @@ php bin/verifier-deploiement.php
 ```
 
 Il contrôle la version de PHP, l'extension PDO, la configuration, la connexion,
-les deux tables, le moteur InnoDB, la clé étrangère et l'absence du compte de
-démonstration. Sortie en code `0` si tout est conforme, `1` sinon. Il refuse de
-s'exécuter depuis un navigateur.
+les deux tables, le moteur InnoDB, la clé étrangère, l'absence du compte de
+démonstration, et enfin **le stockage des sessions**. Sortie en code `0` si tout
+est conforme, `1` sinon. Il refuse de s'exécuter depuis un navigateur.
+
+Le contrôle des sessions écrit réellement un fichier dans le dossier désigné par
+`session.save_path`, puis le supprime. Vérifier la seule présence du dossier ne
+suffirait pas : celui de l'incident du 7 septembre existait, mais était plein.
+
+> **Limite à connaître :** en ligne de commande, PHP peut lire un
+> `session.save_path` différent de celui du serveur web, les deux
+> configurations étant distinctes. Un `[OK]` en console ne remplace donc pas un
+> essai de connexion réel sur le site.
 
 ### 5.2 Contrôles effectués le 4 septembre 2026
 
