@@ -195,7 +195,7 @@ un certificat Let's Encrypt gratuit**, puis cocher la redirection.
 
 ## 5. Vérification après déploiement
 
-### 5.1 Script automatisé
+### 5.1 Sur le serveur — `bin/verifier-deploiement.php`
 
 ```bash
 php bin/verifier-deploiement.php
@@ -215,7 +215,50 @@ suffirait pas : celui de l'incident du 7 septembre existait, mais était plein.
 > configurations étant distinctes. Un `[OK]` en console ne remplace donc pas un
 > essai de connexion réel sur le site.
 
-### 5.2 Contrôles effectués le 4 septembre 2026
+> **Sur cet hébergement, ce script ne peut pas être lancé sur le serveur.**
+> *Web Hosting Access* affiche « Access to the server over SSH : **Forbidden** »,
+> et ce réglage n'est pas modifiable depuis le compte : il est verrouillé par le
+> plan d'hébergement. Le panneau ne propose pas non plus de tâches planifiées.
+> Le script s'exécute donc en local avant chaque mise en ligne, et reste
+> utilisable tel quel sur un hébergement accordant SSH. La vérification de la
+> machine en production est assurée autrement, par le script ci-dessous.
+
+### 5.2 Depuis l'extérieur — `bin/verifier-en-ligne.php`
+
+```bash
+php bin/verifier-en-ligne.php
+php bin/verifier-en-ligne.php https://exemple.test/livreor/
+```
+
+Ce second script n'interroge que des URL publiques : il s'exécute depuis
+n'importe quel poste, sans aucun accès au serveur. C'est la réponse à
+l'impossibilité d'utiliser SSH, et il vérifie ce qu'un visiteur — ou un
+attaquant — peut réellement obtenir.
+
+Vingt-trois contrôles répartis en six familles :
+
+| Famille | Ce qui est vérifié |
+|---|---|
+| Certificat | chaîne de certification, date d'expiration |
+| Redirection | `http://` renvoie bien vers `https://` |
+| Pages publiques | les cinq pages accessibles sans compte répondent en 200 |
+| Contrôle d'accès | `profil.php` et `commentaire.php` renvoient 302 sans session |
+| Fichiers non publics | huit fichiers en 403, le dossier `bin/` en 404 |
+| Comportement | lecture de la base, compte `admin` inutilisable, cookie de session émis, aucune erreur PHP visible |
+
+Sortie en code `0` si tout est conforme, `1` sinon : le script est utilisable
+dans une chaîne d'intégration.
+
+> Un contrôle peut s'afficher `[--]`, c'est-à-dire **non vérifiable depuis ce
+> poste** — sans compter comme un échec. C'est le cas de la validation de la
+> chaîne de certification si le magasin de racines local est trop ancien, ce qui
+> est la situation du poste de développement actuel : PHP y utilise OpenSSL
+> 1.1.1 avec un fichier `cacert.pem` de 2022, antérieur à la racine Sectigo qui
+> signe le certificat du domaine. La date d'expiration, elle, reste lue dans
+> tous les cas, car elle ne demande aucune autorité de confiance.
+
+### 5.3 Contrôles effectués le 4 septembre 2026
+
 
 Relevés depuis l'extérieur, sur l'installation réelle.
 
