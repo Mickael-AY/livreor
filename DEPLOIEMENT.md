@@ -25,7 +25,7 @@ sont celles de l'installation réelle, pas des exemples.
 | Utilisateur | `livreor_user` |
 | HTTPS | Certificat générique `*.students-laplateforme.io`, redirection HTTP → HTTPS automatique |
 
-### Trois écarts avec l'environnement de développement
+### Quatre écarts avec l'environnement de développement
 
 Ce sont les contraintes réelles de l'hébergement, et le code les prend en charge.
 
@@ -35,6 +35,7 @@ Ce sont les contraintes réelles de l'hébergement, et le code les prend en char
 | `root` peut tout faire | `livreor_user` n'a aucun droit `CREATE DATABASE` | Le script SQL ne crée que les tables |
 | Nom de base libre | Préfixe `mickael-ayilan_` imposé | Le nom complet va dans la configuration |
 | Apache seul | nginx devant Apache | Le `.htaccess` reste appliqué, car Apache est dans la chaîne |
+| Sessions dans le dossier PHP par défaut | Dossier commun au serveur, **saturé** | `session.save_path` doit pointer vers un dossier du compte |
 
 ### Cohabitation avec un autre projet
 
@@ -153,7 +154,35 @@ dans le fichier. **Créer d'abord son propre compte depuis le site**, puis :
 DELETE FROM utilisateurs WHERE login = 'admin';
 ```
 
-### 4.6 HTTPS
+### 4.6 Configurer le stockage des sessions
+
+Sur ce serveur mutualisé, le dossier de sessions par défaut de PHP
+(`/var/lib/php/session`) est **commun à tous les comptes et saturé**. PHP ne
+peut plus y écrire, et l'application perd la session à chaque page : la
+connexion est acceptée, puis l'utilisateur est aussitôt « Non connecté ».
+
+Deux actions, indispensables **toutes les deux** :
+
+1. **File Manager** → à la racine du *Home directory*, à côté de `httpdocs` et
+   surtout pas dedans, créer un répertoire nommé `tmp`. Placé hors de la racine
+   web, il n'est accessible par aucune requête HTTP.
+
+2. **PHP Settings** → section *Common settings* → champ **`session.save_path`**.
+   C'est une zone de saisie libre, pas une simple liste : effacer la valeur et
+   écrire le chemin du dossier créé.
+
+   ```
+   /home/storage/vhosts/mickael-ayilan.students-laplateforme.io/tmp
+   ```
+
+> **L'ordre importe peu, mais l'oubli de l'une des deux annule l'autre.**
+> Un `session.save_path` qui désigne un dossier inexistant ne corrige rien.
+
+> Deux chemins désignent la même arborescence sur cet hébergement :
+> `/var/www/vhosts/...` dans les journaux Apache, `/home/storage/vhosts/...`
+> dans les messages PHP. C'est le second qu'attend `session.save_path`.
+
+### 4.7 HTTPS
 
 Sur cet hébergement, un certificat générique `*.students-laplateforme.io`
 couvre déjà le domaine, et la redirection HTTP → HTTPS est active par défaut.
@@ -262,8 +291,71 @@ le journal du serveur, consultable dans **Websites & Domains → Logs**.
 | « Service momentanément indisponible » | Identifiants erronés dans `config.local.php` | Journal des erreurs PHP |
 | Page blanche | Erreur fatale avec `display_errors` désactivé | Journal des erreurs PHP |
 | Accents incorrects | Base recréée sans `utf8mb4` | `SHOW CREATE DATABASE` |
+| Connexion acceptée puis « Non connecté » à la page suivante | Sessions non enregistrées, voir 9.1 | Journal des erreurs, chercher `session_start` |
 | Connexion impossible malgré un bon mot de passe | Session non conservée | Cookies autorisés, HTTPS actif |
 | Erreur SQL à l'import | Script incompatible avec MariaDB 5.5 | Voir la section 1 |
+
+### 9.1 Incident du 7 septembre 2026 — sessions non enregistrées
+
+Premier incident de production de l'application. Il illustre un défaut qui
+n'existe pas en développement et qu'aucune relecture du code n'aurait révélé.
+
+**Symptôme.** La connexion semblait échouer : après validation du formulaire,
+l'accueil affichait « Non connecté ». Aucun message d'erreur, ni à l'écran ni
+pour l'utilisateur.
+
+**Fausse piste.** Tout désignait le mot de passe. Le compte a été supprimé puis
+recréé deux fois, sans effet. Le schéma a été contrôlé : condensat bcrypt de
+60 caractères, colonne `VARCHAR(255)`, aucune troncature.
+
+**Ce qui a réorienté le diagnostic.** Deux observations.
+
+D'abord, `login.php` ne redirige vers `index.php` que si `password_verify()`
+réussit ; un échec réaffiche le formulaire avec un message. Or l'utilisateur
+arrivait bien sur l'accueil : **l'authentification réussissait donc**, et le
+problème se situait après.
+
+Ensuite, le journal d'accès l'a confirmé indépendamment :
+
+```
+2026-09-07 09:06:40  302  POST /livreor/login.php
+```
+
+Un code 302 sur le `POST` de connexion, c'est une authentification acceptée.
+
+**Cause.** Le journal des erreurs donnait la réponse exacte :
+
+```
+PHP Warning: session_start(): open(/var/lib/php/session/sess_..., O_RDWR)
+failed: No space left on device (28)
+```
+
+Le dossier de sessions par défaut, commun à tous les comptes du serveur
+mutualisé, était saturé. PHP créait la session, échouait à l'écrire, et la page
+suivante ne retrouvait rien. Le compte du site, lui, n'utilisait que 0 Mo :
+l'espace en cause n'était pas le sien.
+
+**Correction.** Voir la section 4.6 : un dossier `tmp` propre au compte, hors de
+la racine web, et `session.save_path` qui pointe dessus. La première tentative a
+échoué parce que seul le réglage avait été fait, sans créer le dossier.
+
+**Vérification.** Cycle complet rejoué depuis l'extérieur — inscription,
+connexion, puis lecture de l'accueil avec le cookie obtenu :
+
+```
+connexion : 302
+état de la session : Connecté en tant que test-diag-2
+```
+
+Les comptes de test ont été supprimés ensuite.
+
+**Deux enseignements retenus.**
+
+- `display_errors` désactivé en production protège les visiteurs, mais rend le
+  journal du serveur indispensable. Sans lui, cet incident restait introuvable.
+- Le journal Plesk affiche les entrées avec plusieurs dizaines de minutes de
+  retard. Ne pas conclure qu'une correction a échoué parce que l'erreur y figure
+  encore.
 
 ---
 
