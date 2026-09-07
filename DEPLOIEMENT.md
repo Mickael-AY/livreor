@@ -250,12 +250,14 @@ Sortie en code `0` si tout est conforme, `1` sinon : le script est utilisable
 dans une chaîne d'intégration.
 
 > Un contrôle peut s'afficher `[--]`, c'est-à-dire **non vérifiable depuis ce
-> poste** — sans compter comme un échec. C'est le cas de la validation de la
-> chaîne de certification si le magasin de racines local est trop ancien, ce qui
-> est la situation du poste de développement actuel : PHP y utilise OpenSSL
-> 1.1.1 avec un fichier `cacert.pem` de 2022, antérieur à la racine Sectigo qui
-> signe le certificat du domaine. La date d'expiration, elle, reste lue dans
-> tous les cas, car elle ne demande aucune autorité de confiance.
+> poste**, sans compter comme un échec. C'est le cas de la validation de la
+> chaîne de certification quand le magasin de racines local est trop ancien : le
+> poste de développement a présenté ce cas, son `cacert.pem` datant de 2022,
+> antérieur à la racine Sectigo qui signe le certificat du domaine. Le remède
+> est de remplacer ce fichier par le bundle courant publié sur `curl.se/ca`,
+> puis de vérifier que `curl.cainfo` le désigne dans `php.ini`. La date
+> d'expiration du certificat, elle, est lue dans tous les cas : elle passe par
+> un canal distinct et ne dépend d'aucune autorité de confiance.
 
 ### 5.3 Contrôles effectués le 4 septembre 2026
 
